@@ -9,7 +9,7 @@ export async function POST(
   try {
     const { id: clubId } = await params
     const body = await request.json()
-    const { userId, userName, userEmail, userAvatar } = body
+    const { userId, confirmed } = body
 
     if (!userId) {
       return NextResponse.json(
@@ -18,9 +18,18 @@ export async function POST(
       )
     }
 
+    if (!confirmed) {
+      return NextResponse.json(
+        { success: false, error: 'You must confirm that you are the president of this club' },
+        { status: 400 }
+      )
+    }
+
     // Check if club exists and is unclaimed
-    const clubQuery = 'SELECT is_claimed, president_id, name FROM clubs WHERE id = $1'
-    const clubResult = await pool.query(clubQuery, [clubId])
+    const clubResult = await pool.query(
+      'SELECT is_claimed, name FROM clubs WHERE id = $1',
+      [clubId]
+    )
 
     if (clubResult.rows.length === 0) {
       return NextResponse.json(
@@ -38,29 +47,19 @@ export async function POST(
       )
     }
 
-    // Start transaction: ensure user exists, claim club, and add as president member
+    // Simple transaction: claim club and add as president member
     await pool.query('BEGIN')
 
     try {
-      // 1. Ensure user exists in users table (insert if not exists)
+      // Update club to claimed
       await pool.query(
-        `INSERT INTO users (id, name, email, avatar_url, created_at, updated_at)
-         VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
-         ON CONFLICT (id) DO NOTHING`,
-        [userId, userName || 'Club President', userEmail || null, userAvatar || null]
-      )
-
-      // 2. Update club to claimed
-      await pool.query(
-        'UPDATE clubs SET is_claimed = TRUE, president_id = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2',
+        'UPDATE clubs SET is_claimed = TRUE, president_id = $1 WHERE id = $2',
         [userId, clubId]
       )
 
-      // 3. Add user as president member
+      // Add user as president member
       await pool.query(
-        `INSERT INTO club_members (club_id, user_id, role, joined_at)
-         VALUES ($1, $2, $3, CURRENT_TIMESTAMP)
-         ON CONFLICT (club_id, user_id) DO UPDATE SET role = $3`,
+        'INSERT INTO club_members (club_id, user_id, role) VALUES ($1, $2, $3) ON CONFLICT (club_id, user_id) DO UPDATE SET role = $3',
         [clubId, userId, 'president']
       )
 

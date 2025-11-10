@@ -29,6 +29,17 @@ export async function POST(
       )
     }
 
+    // Verify user exists in database
+    const userQuery = 'SELECT id FROM users WHERE id = $1'
+    const userResult = await pool.query(userQuery, [userId])
+    
+    if (userResult.rows.length === 0) {
+      return NextResponse.json(
+        { success: false, error: 'User not found in database. Please ensure you are logged in properly and try again.' },
+        { status: 404 }
+      )
+    }
+
     // Check if already a member
     const memberCheck = await pool.query(
       'SELECT id FROM club_members WHERE club_id = $1 AND user_id = $2',

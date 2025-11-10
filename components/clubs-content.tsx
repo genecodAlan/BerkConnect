@@ -1,11 +1,11 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback, useMemo } from "react"
+import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import {
@@ -30,13 +30,12 @@ import {
   Heart,
   Code,
   Crown,
-  MessageSquare,
-  Upload,
-  X,
-  UserCog,
 } from "lucide-react"
 import { useAuth } from "@/contexts/auth-context"
 import { AdminClubImport } from "./admin-club-import"
+import { ClaimClubDialog } from "./claim-club-dialog"
+import { ManageLeadershipDialog } from "./manage-leadership-dialog"
+import { CreatePostDialog } from "./create-post-dialog"
 
 interface Club {
   id: string
@@ -80,17 +79,13 @@ export function ClubsContent() {
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedCategory, setSelectedCategory] = useState<string>("all")
   const [selectedClub, setSelectedClub] = useState<Club | null>(null)
-  const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [isTransferDialogOpen, setIsTransferDialogOpen] = useState(false)
-  const [newPostContent, setNewPostContent] = useState("")
-  const [selectedImage, setSelectedImage] = useState<File | null>(null)
-  const [imagePreview, setImagePreview] = useState<string | null>(null)
   const [transferUserId, setTransferUserId] = useState("")
   const [loading, setLoading] = useState(true)
   const [showAdmin, setShowAdmin] = useState(false)
 
   // Load clubs from API
-  const loadClubs = async () => {
+  const loadClubs = useCallback(async () => {
     try {
       setLoading(true)
       const url = user?.id ? `/api/clubs?userId=${user.id}` : "/api/clubs"
@@ -105,13 +100,13 @@ export function ClubsContent() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [user?.id])
 
   useEffect(() => {
     loadClubs()
-  }, [user?.id])
+  }, [loadClubs])
 
-  const handleJoinLeave = async (clubId: string, isJoined: boolean) => {
+  const handleJoinLeave = useCallback(async (clubId: string, isJoined: boolean) => {
     if (!user?.id) return
 
     try {
@@ -138,106 +133,13 @@ export function ClubsContent() {
       console.error("Error joining/leaving club:", error)
       alert("Failed to update membership. Please try again.")
     }
-  }
+  }, [user?.id, loadClubs])
 
-  const handleClaimClub = async (clubId: string) => {
-    if (!user?.id) return
+  const handleClaimSuccess = useCallback(() => {
+    loadClubs()
+  }, [loadClubs])
 
-    try {
-      const response = await fetch(`/api/clubs/${clubId}/claim`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId: user.id }),
-      })
-
-      if (response.ok) {
-        await loadClubs()
-        alert("Club claimed successfully! You are now the president.")
-      } else {
-        const data = await response.json()
-        alert(data.error || "Failed to claim club")
-      }
-    } catch (error) {
-      console.error("Error claiming club:", error)
-      alert("Failed to claim club. Please try again.")
-    }
-  }
-
-  const handleImageSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0]
-    if (file) {
-      if (!file.type.startsWith("image/")) {
-        alert("Please select an image file")
-        return
-      }
-      if (file.size > 5 * 1024 * 1024) {
-        alert("Image size should be less than 5MB")
-        return
-      }
-      setSelectedImage(file)
-      const reader = new FileReader()
-      reader.onload = (e) => {
-        setImagePreview(e.target?.result as string)
-      }
-      reader.readAsDataURL(file)
-    }
-  }
-
-  const removeImage = () => {
-    setSelectedImage(null)
-    setImagePreview(null)
-  }
-
-  const handleCreatePost = async () => {
-    if (!selectedClub || !newPostContent.trim() || !user?.id) return
-
-    try {
-      let imageUrl = ""
-
-      // Upload image if selected
-      if (selectedImage) {
-        const formData = new FormData()
-        formData.append("file", selectedImage)
-
-        const uploadResponse = await fetch("/api/upload", {
-          method: "POST",
-          body: formData,
-        })
-
-        if (uploadResponse.ok) {
-          const uploadData = await uploadResponse.json()
-          imageUrl = uploadData.data.url
-        }
-      }
-
-      // Create post
-      const response = await fetch(`/api/clubs/${selectedClub.id}/posts`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          userId: user.id,
-          content: newPostContent,
-          imageUrl,
-        }),
-      })
-
-      if (response.ok) {
-        setNewPostContent("")
-        setSelectedImage(null)
-        setImagePreview(null)
-        setIsDialogOpen(false)
-        alert("Post created successfully!")
-      } else {
-        const data = await response.json()
-        alert(data.error || "Failed to create post")
-      }
-    } catch (error) {
-      console.error("Error creating post:", error)
-      alert("Failed to create post. Please try again.")
-    }
-  }
-
-  const handleTransferPresidency = async () => {
+  const handleTransferPresidency = useCallback(async () => {
     if (!selectedClub || !transferUserId || !user?.id) return
 
     try {
@@ -263,21 +165,23 @@ export function ClubsContent() {
       console.error("Error transferring presidency:", error)
       alert("Failed to transfer presidency. Please try again.")
     }
-  }
+  }, [selectedClub, transferUserId, user?.id, loadClubs])
 
-  const filteredClubs = clubs.filter((club) => {
-    const matchesSearch =
-      club.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      club.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      club.tags.some((tag) => tag.toLowerCase().includes(searchTerm.toLowerCase()))
+  const filteredClubs = useMemo(() => {
+    return clubs.filter((club) => {
+      const matchesSearch =
+        club.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        club.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        club.tags.some((tag) => tag.toLowerCase().includes(searchTerm.toLowerCase()))
 
-    const matchesCategory = selectedCategory === "all" || club.category === selectedCategory
+      const matchesCategory = selectedCategory === "all" || club.category === selectedCategory
 
-    return matchesSearch && matchesCategory
-  })
+      return matchesSearch && matchesCategory
+    })
+  }, [clubs, searchTerm, selectedCategory])
 
-  const joinedClubs = filteredClubs.filter((club) => club.is_joined)
-  const unclaimedClubs = filteredClubs.filter((club) => !club.is_claimed)
+  const joinedClubs = useMemo(() => filteredClubs.filter((club) => club.is_joined), [filteredClubs])
+  const unclaimedClubs = useMemo(() => filteredClubs.filter((club) => !club.is_claimed), [filteredClubs])
 
   const categories = [
     { value: "all", label: "All Categories" },
@@ -289,8 +193,9 @@ export function ClubsContent() {
     { value: "hobby", label: "Hobby" },
   ]
 
-  const renderClubCard = (club: Club) => {
+  const renderClubCard = (club: Club, showLeadershipBadge: boolean = false) => {
     const CategoryIcon = categoryIcons[club.category]
+    const isLeader = club.memberRole && ['president', 'vice_president', 'officer'].includes(club.memberRole)
 
     return (
       <Card key={club.id} className="overflow-hidden hover:shadow-lg transition-shadow">
@@ -313,12 +218,24 @@ export function ClubsContent() {
               </Badge>
             </div>
           )}
+          {showLeadershipBadge && isLeader && (
+            <div className="absolute top-3 right-3">
+              <Badge variant="outline" className="bg-blue-100 text-blue-800 border-blue-300">
+                <Crown className="h-3 w-3 mr-1" />
+                {club.memberRole === 'president' ? 'President' : club.memberRole === 'vice_president' ? 'VP' : 'Officer'}
+              </Badge>
+            </div>
+          )}
         </div>
 
         <CardHeader className="pb-3">
           <div className="flex items-start justify-between">
             <div className="space-y-1">
-              <CardTitle className="text-lg">{club.name}</CardTitle>
+              <Link href={`/clubs/${club.id}`}>
+                <CardTitle className="text-lg hover:text-primary transition-colors cursor-pointer">
+                  {club.name}
+                </CardTitle>
+              </Link>
               <div className="flex items-center gap-4 text-sm text-muted-foreground">
                 <div className="flex items-center gap-1">
                   <Users className="h-4 w-4" />
@@ -377,143 +294,94 @@ export function ClubsContent() {
 
           <div className="flex gap-2">
             {!club.is_claimed ? (
-              <Button onClick={() => handleClaimClub(club.id)} className="w-full" variant="default">
-                <Crown className="h-4 w-4 mr-2" />
-                Claim Club
-              </Button>
+              user?.id ? (
+                <ClaimClubDialog
+                  clubId={club.id}
+                  clubName={club.name}
+                  userId={user.id}
+                  userName={user.name || "User"}
+                  userEmail={user.email}
+                  userRole={user.role}
+                  userGrade={user.grade}
+                  userDepartment={user.department}
+                  userBio={user.bio}
+                  userAvatar={user.profilePicture}
+                  onClaimSuccess={handleClaimSuccess}
+                />
+              ) : (
+                <Button disabled className="w-full" variant="default">
+                  <Crown className="h-4 w-4 mr-2" />
+                  Login to Claim
+                </Button>
+              )
             ) : (
               <>
-                {club.is_joined && (
+                {club.is_joined && user?.id && (
                   <>
-                    <Dialog
-                      open={isDialogOpen && selectedClub?.id === club.id}
-                      onOpenChange={(open) => {
-                        setIsDialogOpen(open)
-                        if (open) setSelectedClub(club)
-                        else {
-                          setSelectedClub(null)
-                          setNewPostContent("")
-                          setSelectedImage(null)
-                          setImagePreview(null)
-                        }
-                      }}
-                    >
-                      <DialogTrigger asChild>
-                        <Button variant="outline" className="flex-1">
-                          <MessageSquare className="h-4 w-4 mr-2" />
-                          Post
-                        </Button>
-                      </DialogTrigger>
-                      <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
-                        <DialogHeader>
-                          <DialogTitle>Create Post for {club.name}</DialogTitle>
-                          <DialogDescription>Share an update with club members</DialogDescription>
-                        </DialogHeader>
-                        <div className="space-y-4">
-                          <div className="space-y-2">
-                            <Label htmlFor="post-content">Post Content</Label>
-                            <Textarea
-                              id="post-content"
-                              placeholder="What's happening in your club?"
-                              value={newPostContent}
-                              onChange={(e) => setNewPostContent(e.target.value)}
-                              className="min-h-[120px]"
-                            />
-                          </div>
-
-                          {/* Image Upload */}
-                          <div className="space-y-2">
-                            <Label htmlFor="post-image">Image (Optional)</Label>
-                            {!imagePreview ? (
-                              <div className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-4 text-center">
-                                <input
-                                  type="file"
-                                  id="post-image"
-                                  accept="image/*"
-                                  onChange={handleImageSelect}
-                                  className="hidden"
-                                />
-                                <label htmlFor="post-image" className="cursor-pointer">
-                                  <div className="flex flex-col items-center gap-2">
-                                    <Upload className="h-6 w-6 text-muted-foreground" />
-                                    <span className="text-sm text-muted-foreground">Click to upload image</span>
-                                  </div>
-                                </label>
-                              </div>
-                            ) : (
-                              <div className="relative">
-                                <div className="aspect-video rounded-lg overflow-hidden border">
-                                  <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
-                                </div>
-                                <Button
-                                  type="button"
-                                  variant="destructive"
-                                  size="sm"
-                                  className="absolute top-2 right-2"
-                                  onClick={removeImage}
-                                >
-                                  <X className="h-4 w-4" />
-                                </Button>
-                              </div>
-                            )}
-                          </div>
-
-                          <Button onClick={handleCreatePost} className="w-full" disabled={!newPostContent.trim()}>
-                            Post
-                          </Button>
-                        </div>
-                      </DialogContent>
-                    </Dialog>
+                    <CreatePostDialog
+                      clubId={club.id}
+                      clubName={club.name}
+                      userId={user.id}
+                      onPostCreated={loadClubs}
+                    />
 
                     {club.memberRole === "president" && (
-                      <Dialog
-                        open={isTransferDialogOpen && selectedClub?.id === club.id}
-                        onOpenChange={(open) => {
-                          setIsTransferDialogOpen(open)
-                          if (open) setSelectedClub(club)
-                          else {
-                            setSelectedClub(null)
-                            setTransferUserId("")
-                          }
-                        }}
-                      >
-                        <DialogTrigger asChild>
-                          <Button variant="outline" size="icon" title="Transfer Presidency">
-                            <UserCog className="h-4 w-4" />
-                          </Button>
-                        </DialogTrigger>
-                        <DialogContent>
-                          <DialogHeader>
-                            <DialogTitle>Transfer Presidency</DialogTitle>
-                            <DialogDescription>
-                              Transfer club presidency to another member by their user ID
-                            </DialogDescription>
-                          </DialogHeader>
-                          <div className="space-y-4">
-                            <div className="space-y-2">
-                              <Label htmlFor="transfer-user-id">User ID</Label>
-                              <Input
-                                id="transfer-user-id"
-                                placeholder="Enter user ID to transfer to"
-                                value={transferUserId}
-                                onChange={(e) => setTransferUserId(e.target.value)}
-                              />
-                            </div>
-                            <Button onClick={handleTransferPresidency} className="w-full" disabled={!transferUserId}>
-                              Transfer
+                      <>
+                        <ManageLeadershipDialog
+                          clubId={club.id}
+                          clubName={club.name}
+                          currentUserId={user?.id || ""}
+                          isPresident={true}
+                        />
+                        <Dialog
+                          open={isTransferDialogOpen && selectedClub?.id === club.id}
+                          onOpenChange={(open) => {
+                            setIsTransferDialogOpen(open)
+                            if (open) setSelectedClub(club)
+                            else {
+                              setSelectedClub(null)
+                              setTransferUserId("")
+                            }
+                          }}
+                        >
+                          <DialogTrigger asChild>
+                            <Button variant="outline" size="icon" title="Transfer Presidency">
+                              <Crown className="h-4 w-4" />
                             </Button>
-                          </div>
-                        </DialogContent>
-                      </Dialog>
+                          </DialogTrigger>
+                          <DialogContent>
+                            <DialogHeader>
+                              <DialogTitle>Transfer Presidency</DialogTitle>
+                              <DialogDescription>
+                                Transfer club presidency to another member by their user ID
+                              </DialogDescription>
+                            </DialogHeader>
+                            <div className="space-y-4">
+                              <div className="space-y-2">
+                                <Label htmlFor="transfer-user-id">User ID</Label>
+                                <Input
+                                  id="transfer-user-id"
+                                  placeholder="Enter user ID to transfer to"
+                                  value={transferUserId}
+                                  onChange={(e) => setTransferUserId(e.target.value)}
+                                />
+                              </div>
+                              <Button onClick={handleTransferPresidency} className="w-full" disabled={!transferUserId}>
+                                Transfer
+                              </Button>
+                            </div>
+                          </DialogContent>
+                        </Dialog>
+                      </>
                     )}
                   </>
                 )}
                 <Button
                   onClick={() => handleJoinLeave(club.id, club.is_joined || false)}
                   variant={club.is_joined ? "outline" : "default"}
-                  className={club.is_joined ? "flex-1" : "flex-1"}
+                  className={club.is_joined ? "flex-1 border-green-500 text-green-600 hover:bg-green-50" : "flex-1"}
                 >
-                  {club.is_joined ? "Leave" : "Join"}
+                  {club.is_joined ? "Joined" : "Join"}
                 </Button>
               </>
             )}
@@ -596,7 +464,7 @@ export function ClubsContent() {
           <div className="text-sm text-muted-foreground">Showing {filteredClubs.length} clubs</div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredClubs.map(renderClubCard)}
+            {filteredClubs.map((club) => renderClubCard(club, false))}
           </div>
 
           {filteredClubs.length === 0 && (
@@ -610,7 +478,7 @@ export function ClubsContent() {
         <TabsContent value="my-clubs" className="space-y-6">
           <div className="text-sm text-muted-foreground">{joinedClubs.length} joined clubs</div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {joinedClubs.map(renderClubCard)}
+            {joinedClubs.map((club) => renderClubCard(club, true))}
           </div>
           {joinedClubs.length === 0 && (
             <div className="text-center py-12">
@@ -623,7 +491,7 @@ export function ClubsContent() {
         <TabsContent value="unclaimed" className="space-y-6">
           <div className="text-sm text-muted-foreground">{unclaimedClubs.length} unclaimed clubs available</div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {unclaimedClubs.map(renderClubCard)}
+            {unclaimedClubs.map((club) => renderClubCard(club, false))}
           </div>
           {unclaimedClubs.length === 0 && (
             <div className="text-center py-12">

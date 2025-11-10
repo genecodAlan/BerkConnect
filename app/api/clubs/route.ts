@@ -61,7 +61,7 @@ export async function GET(request: NextRequest) {
 
       const clubs = result.rows.map((club: any) => ({
         ...club,
-        isJoined: membershipMap.has(club.id),
+        is_joined: membershipMap.has(club.id),
         memberRole: membershipMap.get(club.id) || null,
       }))
 
