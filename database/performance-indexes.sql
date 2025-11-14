@@ -2,36 +2,24 @@
 -- Run this to improve query performance
 
 -- ============================================
--- CLUB POSTS INDEXES
+-- POSTS INDEXES
 -- ============================================
 
 -- Index for fetching posts ordered by date (most common query)
-CREATE INDEX IF NOT EXISTS idx_club_posts_created_at 
-ON club_posts(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_posts_created_at 
+ON posts(created_at DESC);
 
 -- Index for fetching posts by club
-CREATE INDEX IF NOT EXISTS idx_club_posts_club_id 
-ON club_posts(club_id);
+CREATE INDEX IF NOT EXISTS idx_posts_club_id 
+ON posts(club_id);
 
--- Index for fetching posts by author
-CREATE INDEX IF NOT EXISTS idx_club_posts_author_id 
-ON club_posts(author_id);
+-- Index for fetching posts by user
+CREATE INDEX IF NOT EXISTS idx_posts_user_id 
+ON posts(user_id);
 
 -- Composite index for club posts with date ordering
-CREATE INDEX IF NOT EXISTS idx_club_posts_club_created 
-ON club_posts(club_id, created_at DESC);
-
--- ============================================
--- POST LIKES INDEXES
--- ============================================
-
--- Index for checking if user liked a post
-CREATE INDEX IF NOT EXISTS idx_post_likes_user_post 
-ON post_likes(user_id, post_id);
-
--- Index for counting likes per post
-CREATE INDEX IF NOT EXISTS idx_post_likes_post_id 
-ON post_likes(post_id);
+CREATE INDEX IF NOT EXISTS idx_posts_club_created 
+ON posts(club_id, created_at DESC);
 
 -- ============================================
 -- CLUB MEMBERS INDEXES
@@ -94,8 +82,7 @@ ON users(role);
 -- ============================================
 
 -- Update statistics for query planner
-ANALYZE club_posts;
-ANALYZE post_likes;
+ANALYZE posts;
 ANALYZE club_members;
 ANALYZE clubs;
 ANALYZE club_tags;
@@ -105,11 +92,11 @@ ANALYZE users;
 -- VERIFY INDEXES
 -- ============================================
 
--- Check all indexes on club_posts table
+-- Check all indexes on tables
 SELECT 
     tablename,
     indexname,
     indexdef
 FROM pg_indexes
-WHERE tablename IN ('club_posts', 'post_likes', 'club_members', 'clubs', 'club_tags', 'users')
+WHERE tablename IN ('posts', 'club_members', 'clubs', 'club_tags', 'users')
 ORDER BY tablename, indexname;
