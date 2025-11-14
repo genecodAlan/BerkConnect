@@ -107,28 +107,28 @@ export function ClaimClubDialog({
           Claim Club
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-md">
+      <DialogContent className="max-w-md w-[calc(100vw-2rem)] sm:w-full max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <Crown className="h-5 w-5" />
+          <DialogTitle className="flex items-center gap-2 text-base sm:text-lg">
+            <Crown className="h-4 w-4 sm:h-5 sm:w-5" />
             Claim {clubName}
           </DialogTitle>
-          <DialogDescription>
+          <DialogDescription className="text-xs sm:text-sm">
             By claiming this club, you will become its president and be responsible for managing it.
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-4">
-          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 flex items-start gap-2">
-            <AlertTriangle className="h-4 w-4 text-yellow-600 mt-0.5 flex-shrink-0" />
-            <div className="text-sm text-yellow-800">
+        <div className="space-y-3 sm:space-y-4">
+          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-2.5 sm:p-3 flex items-start gap-2">
+            <AlertTriangle className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-yellow-600 mt-0.5 flex-shrink-0" />
+            <div className="text-xs sm:text-sm text-yellow-800">
               <p className="font-medium">Important:</p>
               <p>Only claim this club if you are actually the president or have permission to manage it.</p>
             </div>
           </div>
 
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-            <p className="text-sm text-blue-800">
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-2.5 sm:p-3">
+            <p className="text-xs sm:text-sm text-blue-800">
               <span className="font-medium">Claiming as:</span> {userName}
             </p>
             <p className="text-xs text-blue-600 mt-1">
@@ -137,15 +137,15 @@ export function ClaimClubDialog({
           </div>
 
           {/* Debug Section */}
-          <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
-            <div className="flex items-center justify-between mb-2">
-              <p className="text-sm font-medium text-gray-700">Debug Info:</p>
-              <Button variant="outline" size="sm" onClick={checkUserStatus}>
+          <div className="bg-gray-50 border border-gray-200 rounded-lg p-2.5 sm:p-3">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
+              <p className="text-xs sm:text-sm font-medium text-gray-700">Debug Info:</p>
+              <Button variant="outline" size="sm" onClick={checkUserStatus} className="h-8 text-xs w-full sm:w-auto">
                 Check User Status
               </Button>
             </div>
             {debugInfo && (
-              <p className="text-xs text-gray-600">{debugInfo}</p>
+              <p className="text-xs text-gray-600 break-words">{debugInfo}</p>
             )}
           </div>
 
@@ -154,11 +154,12 @@ export function ClaimClubDialog({
               id="confirm-president"
               checked={isConfirmed}
               onCheckedChange={(checked) => setIsConfirmed(checked as boolean)}
+              className="mt-0.5"
             />
-            <div className="grid gap-1.5 leading-none">
+            <div className="grid gap-1 leading-none flex-1">
               <label
                 htmlFor="confirm-president"
-                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
+                className="text-xs sm:text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
               >
                 I confirm that I am the president of this club
               </label>
@@ -172,14 +173,14 @@ export function ClaimClubDialog({
             <Button
               variant="outline"
               onClick={() => setIsOpen(false)}
-              className="flex-1"
+              className="flex-1 h-9 sm:h-10 text-sm"
               disabled={isLoading}
             >
               Cancel
             </Button>
             <Button
               onClick={handleClaim}
-              className="flex-1"
+              className="flex-1 h-9 sm:h-10 text-sm"
               disabled={!isConfirmed || isLoading}
             >
               {isLoading ? "Claiming..." : "Claim Club"}

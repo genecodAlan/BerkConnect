@@ -153,30 +153,30 @@ export const EditClubDialog = memo(function EditClubDialog({
           Edit Club Info
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto w-[calc(100vw-2rem)] sm:w-full">
         <DialogHeader>
-          <DialogTitle>Edit {clubName}</DialogTitle>
-          <DialogDescription>Update club information and details</DialogDescription>
+          <DialogTitle className="text-base sm:text-lg">Edit {clubName}</DialogTitle>
+          <DialogDescription className="text-xs sm:text-sm">Update club information and details</DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-4">
+        <div className="space-y-3 sm:space-y-4">
           {/* Description */}
-          <div className="space-y-2">
-            <Label htmlFor="description">Description *</Label>
+          <div className="space-y-1.5 sm:space-y-2">
+            <Label htmlFor="description" className="text-sm">Description *</Label>
             <Textarea
               id="description"
               placeholder="Describe your club..."
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="min-h-[120px]"
+              className="min-h-[100px] sm:min-h-[120px] text-sm"
             />
           </div>
 
           {/* Category */}
-          <div className="space-y-2">
-            <Label htmlFor="category">Category *</Label>
+          <div className="space-y-1.5 sm:space-y-2">
+            <Label htmlFor="category" className="text-sm">Category *</Label>
             <Select value={category} onValueChange={setCategory}>
-              <SelectTrigger>
+              <SelectTrigger className="h-9 sm:h-10 text-sm">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -191,32 +191,34 @@ export const EditClubDialog = memo(function EditClubDialog({
           </div>
 
           {/* Meeting Time */}
-          <div className="space-y-2">
-            <Label htmlFor="meeting-time">Meeting Time</Label>
+          <div className="space-y-1.5 sm:space-y-2">
+            <Label htmlFor="meeting-time" className="text-sm">Meeting Time</Label>
             <Input
               id="meeting-time"
               placeholder="e.g., Tuesdays 3:30 PM"
               value={meetingTime}
               onChange={(e) => setMeetingTime(e.target.value)}
+              className="h-9 sm:h-10 text-sm"
             />
           </div>
 
           {/* Location */}
-          <div className="space-y-2">
-            <Label htmlFor="location">Location</Label>
+          <div className="space-y-1.5 sm:space-y-2">
+            <Label htmlFor="location" className="text-sm">Location</Label>
             <Input
               id="location"
               placeholder="e.g., Room 204"
               value={location}
               onChange={(e) => setLocation(e.target.value)}
+              className="h-9 sm:h-10 text-sm"
             />
           </div>
 
           {/* Image Upload */}
-          <div className="space-y-2">
-            <Label htmlFor="club-image">Club Image</Label>
+          <div className="space-y-1.5 sm:space-y-2">
+            <Label htmlFor="club-image" className="text-sm">Club Image</Label>
             {!imagePreview ? (
-              <div className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-6 text-center">
+              <div className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-4 sm:p-6 text-center">
                 <input
                   type="file"
                   id="club-image"
@@ -225,9 +227,9 @@ export const EditClubDialog = memo(function EditClubDialog({
                   className="hidden"
                 />
                 <label htmlFor="club-image" className="cursor-pointer">
-                  <div className="flex flex-col items-center gap-2">
-                    <Upload className="h-8 w-8 text-muted-foreground" />
-                    <span className="text-sm text-muted-foreground">Click to upload club image</span>
+                  <div className="flex flex-col items-center gap-1.5 sm:gap-2">
+                    <Upload className="h-6 w-6 sm:h-8 sm:w-8 text-muted-foreground" />
+                    <span className="text-xs sm:text-sm text-muted-foreground">Click to upload club image</span>
                     <span className="text-xs text-muted-foreground">Max 5MB</span>
                   </div>
                 </label>
@@ -241,21 +243,21 @@ export const EditClubDialog = memo(function EditClubDialog({
                   type="button"
                   variant="destructive"
                   size="sm"
-                  className="absolute top-2 right-2"
+                  className="absolute top-1.5 right-1.5 sm:top-2 sm:right-2 h-7 w-7 sm:h-8 sm:w-8 p-0"
                   onClick={removeImage}
                 >
-                  <X className="h-4 w-4" />
+                  <X className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                 </Button>
               </div>
             )}
           </div>
 
           {/* Action Buttons */}
-          <div className="flex gap-2 pt-4">
-            <Button onClick={handleSubmit} disabled={loading} className="flex-1">
+          <div className="flex gap-2 pt-2 sm:pt-4">
+            <Button onClick={handleSubmit} disabled={loading} className="flex-1 h-9 sm:h-10 text-sm">
               {loading ? "Updating..." : "Update Club"}
             </Button>
-            <Button variant="outline" onClick={() => setOpen(false)} disabled={loading}>
+            <Button variant="outline" onClick={() => setOpen(false)} disabled={loading} className="h-9 sm:h-10 text-sm">
               Cancel
             </Button>
           </div>

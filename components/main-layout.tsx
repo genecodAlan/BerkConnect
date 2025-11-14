@@ -56,7 +56,7 @@ export function MainLayout() {
         user={user}
         onLogout={logout}
       />
-      <main className="pt-16">{renderContent()}</main>
+      <main className="pt-14 sm:pt-16">{renderContent()}</main>
     </div>
   )
 }

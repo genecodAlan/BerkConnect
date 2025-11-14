@@ -130,28 +130,28 @@ export const CreatePostDialog = memo(function CreatePostDialog({
           Post
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto w-[calc(100vw-2rem)] sm:w-full">
         <DialogHeader>
-          <DialogTitle>Create Post for {clubName}</DialogTitle>
-          <DialogDescription>Share an update with club members</DialogDescription>
+          <DialogTitle className="text-base sm:text-lg">Create Post for {clubName}</DialogTitle>
+          <DialogDescription className="text-xs sm:text-sm">Share an update with club members</DialogDescription>
         </DialogHeader>
-        <div className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="post-content">Post Content</Label>
+        <div className="space-y-3 sm:space-y-4">
+          <div className="space-y-1.5 sm:space-y-2">
+            <Label htmlFor="post-content" className="text-sm">Post Content</Label>
             <Textarea
               id="post-content"
               placeholder="What's happening in your club?"
               value={content}
               onChange={(e) => setContent(e.target.value)}
-              className="min-h-[120px]"
+              className="min-h-[100px] sm:min-h-[120px] text-sm"
             />
           </div>
 
           {/* Image Upload */}
-          <div className="space-y-2">
-            <Label htmlFor="post-image">Image (Optional)</Label>
+          <div className="space-y-1.5 sm:space-y-2">
+            <Label htmlFor="post-image" className="text-sm">Image (Optional)</Label>
             {!imagePreview ? (
-              <div className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-4 text-center">
+              <div className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-3 sm:p-4 text-center">
                 <input
                   type="file"
                   id="post-image"
@@ -160,9 +160,9 @@ export const CreatePostDialog = memo(function CreatePostDialog({
                   className="hidden"
                 />
                 <label htmlFor="post-image" className="cursor-pointer">
-                  <div className="flex flex-col items-center gap-2">
-                    <Upload className="h-6 w-6 text-muted-foreground" />
-                    <span className="text-sm text-muted-foreground">Click to upload image</span>
+                  <div className="flex flex-col items-center gap-1.5 sm:gap-2">
+                    <Upload className="h-5 w-5 sm:h-6 sm:w-6 text-muted-foreground" />
+                    <span className="text-xs sm:text-sm text-muted-foreground">Click to upload image</span>
                   </div>
                 </label>
               </div>
@@ -175,16 +175,16 @@ export const CreatePostDialog = memo(function CreatePostDialog({
                   type="button"
                   variant="destructive"
                   size="sm"
-                  className="absolute top-2 right-2"
+                  className="absolute top-1.5 right-1.5 sm:top-2 sm:right-2 h-7 w-7 sm:h-8 sm:w-8 p-0"
                   onClick={removeImage}
                 >
-                  <X className="h-4 w-4" />
+                  <X className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                 </Button>
               </div>
             )}
           </div>
 
-          <Button onClick={handleSubmit} className="w-full" disabled={!content.trim() || loading}>
+          <Button onClick={handleSubmit} className="w-full h-9 sm:h-10 text-sm" disabled={!content.trim() || loading}>
             {loading ? "Posting..." : "Post"}
           </Button>
         </div>

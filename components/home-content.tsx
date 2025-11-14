@@ -149,32 +149,32 @@ export function HomeContent() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-8 space-y-6">
+    <div className="max-w-2xl mx-auto px-3 sm:px-4 py-4 sm:py-8 space-y-4 sm:space-y-6">
       {/* Header */}
-      <div className="text-center space-y-2">
-        <h1 className="text-3xl font-bold text-foreground">Club Feed</h1>
-        <p className="text-muted-foreground">Posts from all school clubs</p>
+      <div className="text-center space-y-1 sm:space-y-2">
+        <h1 className="text-2xl sm:text-3xl font-bold text-foreground">Club Feed</h1>
+        <p className="text-sm sm:text-base text-muted-foreground">Posts from all school clubs</p>
       </div>
 
       {/* Posts Feed */}
-      <div className="space-y-4">
+      <div className="space-y-3 sm:space-y-4">
         {posts.length === 0 ? (
           <Card>
-            <CardContent className="py-12 text-center">
-              <Users className="h-12 w-12 mx-auto mb-4 text-muted-foreground opacity-50" />
-              <p className="text-lg text-muted-foreground">No club posts yet</p>
-              <p className="text-sm text-muted-foreground mt-2">Join a club to see posts from your clubs!</p>
+            <CardContent className="py-8 sm:py-12 text-center">
+              <Users className="h-10 w-10 sm:h-12 sm:w-12 mx-auto mb-3 sm:mb-4 text-muted-foreground opacity-50" />
+              <p className="text-base sm:text-lg text-muted-foreground">No club posts yet</p>
+              <p className="text-xs sm:text-sm text-muted-foreground mt-2">Join a club to see posts from your clubs!</p>
             </CardContent>
           </Card>
         ) : (
           posts.map((post) => (
             <Card key={post.id} className="overflow-hidden">
-              <CardHeader className="pb-3">
+              <CardHeader className="pb-2 sm:pb-3 px-3 sm:px-6 pt-3 sm:pt-6">
                 <div className="flex items-start justify-between">
-                  <div className="flex items-center gap-3">
-                    <Avatar className="h-10 w-10">
+                  <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
+                    <Avatar className="h-9 w-9 sm:h-10 sm:w-10 flex-shrink-0">
                       <AvatarImage src={post.club_avatar || "/placeholder.svg"} alt={post.club_name || "Club"} />
-                      <AvatarFallback className="bg-primary text-primary-foreground">
+                      <AvatarFallback className="bg-primary text-primary-foreground text-xs sm:text-sm">
                         {(post.club_name || "C")
                           .split(" ")
                           .map((n) => n[0])
@@ -182,58 +182,58 @@ export function HomeContent() {
                           .substring(0, 2)}
                       </AvatarFallback>
                     </Avatar>
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <h3 className="font-semibold text-card-foreground">{post.club_name || "Club"}</h3>
-                        <Badge variant="secondary" className="bg-blue-100 text-blue-800">
-                          <Users className="h-3 w-3 mr-1" />
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
+                        <h3 className="font-semibold text-sm sm:text-base text-card-foreground truncate">{post.club_name || "Club"}</h3>
+                        <Badge variant="secondary" className="bg-blue-100 text-blue-800 text-xs flex-shrink-0">
+                          <Users className="h-2.5 w-2.5 sm:h-3 sm:w-3 mr-0.5 sm:mr-1" />
                           Club
                         </Badge>
                       </div>
-                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <span>Posted by {post.author_name}</span>
-                        <span>•</span>
-                        <span>{formatTimestamp(post.created_at)}</span>
+                      <div className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm text-muted-foreground flex-wrap">
+                        <span className="truncate">Posted by {post.author_name}</span>
+                        <span className="hidden xs:inline">•</span>
+                        <span className="text-xs">{formatTimestamp(post.created_at)}</span>
                       </div>
                     </div>
                   </div>
                 </div>
               </CardHeader>
 
-              <CardContent className="pt-0 space-y-4">
-                <p className="text-card-foreground leading-relaxed">{post.content}</p>
+              <CardContent className="pt-0 space-y-3 sm:space-y-4 px-3 sm:px-6 pb-3 sm:pb-6">
+                <p className="text-sm sm:text-base text-card-foreground leading-relaxed">{post.content}</p>
 
                 {post.image_url && (
-                  <div className="rounded-lg overflow-hidden">
+                  <div className="rounded-lg overflow-hidden -mx-3 sm:mx-0">
                     <img
                       src={post.image_url.startsWith("data:") ? post.image_url : post.image_url}
                       alt="Post content"
-                      className="w-full h-64 object-cover"
+                      className="w-full h-48 sm:h-64 object-cover"
                     />
                   </div>
                 )}
 
                 {/* Post Actions */}
                 <div className="flex items-center justify-between pt-2 border-t border-border">
-                  <div className="flex items-center gap-6">
+                  <div className="flex items-center gap-3 sm:gap-6">
                     <Button
                       variant="ghost"
                       size="sm"
                       onClick={() => handleLike(post.id, post.isLiked || false)}
-                      className={`gap-2 ${post.isLiked ? "text-red-500 hover:text-red-600" : "text-muted-foreground"}`}
+                      className={`gap-1.5 sm:gap-2 h-8 sm:h-9 px-2 sm:px-3 ${post.isLiked ? "text-red-500 hover:text-red-600" : "text-muted-foreground"}`}
                     >
-                      <Heart className={`h-4 w-4 ${post.isLiked ? "fill-current" : ""}`} />
-                      <span>{post.likes_count || 0}</span>
+                      <Heart className={`h-3.5 w-3.5 sm:h-4 sm:w-4 ${post.isLiked ? "fill-current" : ""}`} />
+                      <span className="text-xs sm:text-sm">{post.likes_count || 0}</span>
                     </Button>
 
-                    <Button variant="ghost" size="sm" className="gap-2 text-muted-foreground">
-                      <MessageCircle className="h-4 w-4" />
-                      <span>{post.comments_count || 0}</span>
+                    <Button variant="ghost" size="sm" className="gap-1.5 sm:gap-2 h-8 sm:h-9 px-2 sm:px-3 text-muted-foreground">
+                      <MessageCircle className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                      <span className="text-xs sm:text-sm">{post.comments_count || 0}</span>
                     </Button>
 
-                    <Button variant="ghost" size="sm" className="gap-2 text-muted-foreground">
-                      <Share2 className="h-4 w-4" />
-                      Share
+                    <Button variant="ghost" size="sm" className="gap-1.5 sm:gap-2 h-8 sm:h-9 px-2 sm:px-3 text-muted-foreground">
+                      <Share2 className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                      <span className="text-xs sm:text-sm hidden xs:inline">Share</span>
                     </Button>
                   </div>
                 </div>

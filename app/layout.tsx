@@ -11,6 +11,7 @@ export const metadata: Metadata = {
   description:
     'Connect with your school community. Share updates, join clubs, and stay informed about campus life.',
   generator: 'v0.app',
+  viewport: 'width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes',
 }
 
 // ✅ Combine your fonts once outside the component (server-safe)

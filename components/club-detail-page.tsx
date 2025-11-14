@@ -175,38 +175,38 @@ export function ClubDetailPage({ clubId }: { clubId: string }) {
   const isLeader = club.memberRole && ["president", "vice_president", "officer"].includes(club.memberRole)
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-8 space-y-6">
+    <div className="max-w-6xl mx-auto px-3 sm:px-4 py-4 sm:py-8 space-y-4 sm:space-y-6">
       {/* Back Button */}
-      <Button variant="ghost" onClick={() => router.push("/")} className="mb-4">
-        <ArrowLeft className="h-4 w-4 mr-2" />
+      <Button variant="ghost" onClick={() => router.push("/")} className="mb-2 sm:mb-4 h-9 text-sm" size="sm">
+        <ArrowLeft className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-1.5 sm:mr-2" />
         Back to Clubs
       </Button>
 
       {/* Hero Section */}
-      <div className="relative h-64 rounded-lg overflow-hidden">
+      <div className="relative h-48 sm:h-64 rounded-lg overflow-hidden">
         <img
           src={club.image_url || "/placeholder.svg"}
           alt={club.name}
           className="w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-        <div className="absolute bottom-6 left-6 right-6">
+        <div className="absolute bottom-3 sm:bottom-6 left-3 sm:left-6 right-3 sm:right-6">
           <div className="flex items-start justify-between">
-            <div>
-              <h1 className="text-4xl font-bold text-white mb-2">{club.name}</h1>
-              <div className="flex items-center gap-3">
-                <Badge className={categoryColors[club.category]}>
-                  <CategoryIcon className="h-3 w-3 mr-1" />
+            <div className="min-w-0 flex-1">
+              <h1 className="text-2xl sm:text-4xl font-bold text-white mb-1.5 sm:mb-2 truncate">{club.name}</h1>
+              <div className="flex items-center gap-1.5 sm:gap-3 flex-wrap">
+                <Badge className={`${categoryColors[club.category]} text-xs`}>
+                  <CategoryIcon className="h-2.5 w-2.5 sm:h-3 sm:w-3 mr-0.5 sm:mr-1" />
                   {club.category}
                 </Badge>
                 {!club.is_claimed && (
-                  <Badge variant="outline" className="bg-yellow-100 text-yellow-800 border-yellow-300">
+                  <Badge variant="outline" className="bg-yellow-100 text-yellow-800 border-yellow-300 text-xs">
                     Unclaimed
                   </Badge>
                 )}
                 {isLeader && (
-                  <Badge variant="outline" className="bg-blue-100 text-blue-800 border-blue-300">
-                    <Crown className="h-3 w-3 mr-1" />
+                  <Badge variant="outline" className="bg-blue-100 text-blue-800 border-blue-300 text-xs">
+                    <Crown className="h-2.5 w-2.5 sm:h-3 sm:w-3 mr-0.5 sm:mr-1" />
                     Leadership
                   </Badge>
                 )}
@@ -217,31 +217,31 @@ export function ClubDetailPage({ clubId }: { clubId: string }) {
       </div>
 
       {/* Main Content Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
         {/* Left Column - Club Info */}
-        <div className="lg:col-span-2 space-y-6">
+        <div className="lg:col-span-2 space-y-4 sm:space-y-6">
           {/* About Section */}
           <Card>
-            <CardHeader>
-              <CardTitle>About</CardTitle>
+            <CardHeader className="px-3 sm:px-6 py-3 sm:py-6">
+              <CardTitle className="text-base sm:text-lg">About</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <p className="text-muted-foreground">{club.description}</p>
+            <CardContent className="space-y-3 sm:space-y-4 px-3 sm:px-6 pb-3 sm:pb-6">
+              <p className="text-sm sm:text-base text-muted-foreground">{club.description}</p>
 
               {club.is_claimed && (club.meeting_time || club.location) && (
                 <>
                   <Separator />
-                  <div className="space-y-2">
+                  <div className="space-y-1.5 sm:space-y-2">
                     {club.meeting_time && (
-                      <div className="flex items-center gap-2 text-sm">
-                        <Calendar className="h-4 w-4 text-muted-foreground" />
-                        <span>{club.meeting_time}</span>
+                      <div className="flex items-center gap-2 text-xs sm:text-sm">
+                        <Calendar className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-muted-foreground flex-shrink-0" />
+                        <span className="truncate">{club.meeting_time}</span>
                       </div>
                     )}
                     {club.location && (
-                      <div className="flex items-center gap-2 text-sm">
-                        <MapPin className="h-4 w-4 text-muted-foreground" />
-                        <span>{club.location}</span>
+                      <div className="flex items-center gap-2 text-xs sm:text-sm">
+                        <MapPin className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-muted-foreground flex-shrink-0" />
+                        <span className="truncate">{club.location}</span>
                       </div>
                     )}
                   </div>
@@ -251,9 +251,9 @@ export function ClubDetailPage({ clubId }: { clubId: string }) {
               {club.tags && club.tags.length > 0 && (
                 <>
                   <Separator />
-                  <div className="flex flex-wrap gap-2">
+                  <div className="flex flex-wrap gap-1.5 sm:gap-2">
                     {club.tags.map((tag) => (
-                      <Badge key={tag} variant="outline">
+                      <Badge key={tag} variant="outline" className="text-xs">
                         {tag}
                       </Badge>
                     ))}
@@ -265,57 +265,57 @@ export function ClubDetailPage({ clubId }: { clubId: string }) {
 
           {/* Posts Section */}
           <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <MessageSquare className="h-5 w-5" />
+            <CardHeader className="px-3 sm:px-6 py-3 sm:py-6">
+              <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+                <MessageSquare className="h-4 w-4 sm:h-5 sm:w-5" />
                 Recent Posts
               </CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="px-3 sm:px-6 pb-3 sm:pb-6">
               {posts.length > 0 ? (
-                <div className="space-y-4">
+                <div className="space-y-3 sm:space-y-4">
                   {posts.map((post) => (
-                    <div key={post.id} className="border rounded-lg p-4 space-y-3">
-                      <div className="flex items-center gap-3">
-                        <Avatar className="h-8 w-8">
+                    <div key={post.id} className="border rounded-lg p-3 sm:p-4 space-y-2 sm:space-y-3">
+                      <div className="flex items-center gap-2 sm:gap-3">
+                        <Avatar className="h-7 w-7 sm:h-8 sm:w-8 flex-shrink-0">
                           <AvatarImage src={post.author_avatar || "/placeholder.svg"} />
-                          <AvatarFallback>
+                          <AvatarFallback className="text-xs">
                             {post.author_name
                               .split(" ")
                               .map((n) => n[0])
                               .join("")}
                           </AvatarFallback>
                         </Avatar>
-                        <div>
-                          <p className="font-medium text-sm">{post.author_name}</p>
+                        <div className="min-w-0 flex-1">
+                          <p className="font-medium text-xs sm:text-sm truncate">{post.author_name}</p>
                           <p className="text-xs text-muted-foreground">
                             {new Date(post.created_at).toLocaleDateString()}
                           </p>
                         </div>
                       </div>
-                      <p className="text-sm">{post.content}</p>
+                      <p className="text-xs sm:text-sm">{post.content}</p>
                       {post.image_url && (
                         <img
                           src={post.image_url}
                           alt="Post"
-                          className="rounded-lg w-full max-h-64 object-cover"
+                          className="rounded-lg w-full max-h-48 sm:max-h-64 object-cover"
                         />
                       )}
                     </div>
                   ))}
                 </div>
               ) : (
-                <p className="text-center text-muted-foreground py-8">No posts yet</p>
+                <p className="text-center text-sm sm:text-base text-muted-foreground py-6 sm:py-8">No posts yet</p>
               )}
             </CardContent>
           </Card>
         </div>
 
         {/* Right Column - Sidebar */}
-        <div className="space-y-6">
+        <div className="space-y-4 sm:space-y-6">
           {/* Action Buttons */}
           <Card>
-            <CardContent className="pt-6 space-y-3">
+            <CardContent className="pt-4 sm:pt-6 space-y-2 sm:space-y-3 px-3 sm:px-6 pb-3 sm:pb-6">
               {club.is_claimed ? (
                 <>
                   {user?.id && (
@@ -324,8 +324,8 @@ export function ClubDetailPage({ clubId }: { clubId: string }) {
                       variant={club.is_joined ? "outline" : "default"}
                       className={
                         club.is_joined
-                          ? "w-full border-green-500 text-green-600 hover:bg-green-50"
-                          : "w-full"
+                          ? "w-full border-green-500 text-green-600 hover:bg-green-50 h-9 sm:h-10 text-sm"
+                          : "w-full h-9 sm:h-10 text-sm"
                       }
                     >
                       {club.is_joined ? "Joined" : "Join Club"}
@@ -361,7 +361,7 @@ export function ClubDetailPage({ clubId }: { clubId: string }) {
                   )}
                 </>
               ) : (
-                <p className="text-sm text-muted-foreground text-center py-2">
+                <p className="text-xs sm:text-sm text-muted-foreground text-center py-2">
                   This club is unclaimed. Visit the main clubs page to claim it.
                 </p>
               )}
@@ -371,23 +371,23 @@ export function ClubDetailPage({ clubId }: { clubId: string }) {
           {/* President Info */}
           {club.is_claimed && club.president_name && (
             <Card>
-              <CardHeader>
-                <CardTitle className="text-base">Club President</CardTitle>
+              <CardHeader className="px-3 sm:px-6 py-3 sm:py-6">
+                <CardTitle className="text-sm sm:text-base">Club President</CardTitle>
               </CardHeader>
-              <CardContent>
-                <div className="flex items-center gap-3">
-                  <Avatar>
+              <CardContent className="px-3 sm:px-6 pb-3 sm:pb-6">
+                <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+                  <Avatar className="h-9 w-9 sm:h-10 sm:w-10 flex-shrink-0">
                     <AvatarImage src={club.president_avatar || "/placeholder.svg"} />
-                    <AvatarFallback>
+                    <AvatarFallback className="text-xs sm:text-sm">
                       {club.president_name
                         .split(" ")
                         .map((n) => n[0])
                         .join("")}
                     </AvatarFallback>
                   </Avatar>
-                  <div>
-                    <p className="font-medium">{club.president_name}</p>
-                    <p className="text-sm text-muted-foreground">{club.president_email}</p>
+                  <div className="min-w-0 flex-1">
+                    <p className="font-medium text-sm sm:text-base truncate">{club.president_name}</p>
+                    <p className="text-xs sm:text-sm text-muted-foreground truncate">{club.president_email}</p>
                   </div>
                 </div>
               </CardContent>
@@ -396,19 +396,19 @@ export function ClubDetailPage({ clubId }: { clubId: string }) {
 
           {/* Members List */}
           <Card>
-            <CardHeader>
-              <CardTitle className="text-base flex items-center gap-2">
-                <Users className="h-4 w-4" />
+            <CardHeader className="px-3 sm:px-6 py-3 sm:py-6">
+              <CardTitle className="text-sm sm:text-base flex items-center gap-2">
+                <Users className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                 Members ({club.member_count})
               </CardTitle>
             </CardHeader>
-            <CardContent>
-              <div className="space-y-3 max-h-96 overflow-y-auto">
+            <CardContent className="px-3 sm:px-6 pb-3 sm:pb-6">
+              <div className="space-y-2 sm:space-y-3 max-h-64 sm:max-h-96 overflow-y-auto">
                 {members.map((member) => {
                   const RoleIcon = roleIcons[member.role as keyof typeof roleIcons] || Users
                   return (
-                    <div key={member.id} className="flex items-center gap-3">
-                      <Avatar className="h-8 w-8">
+                    <div key={member.id} className="flex items-center gap-2 sm:gap-3 min-w-0">
+                      <Avatar className="h-7 w-7 sm:h-8 sm:w-8 flex-shrink-0">
                         <AvatarImage src={member.avatar_url || "/placeholder.svg"} />
                         <AvatarFallback className="text-xs">
                           {member.name
@@ -418,9 +418,9 @@ export function ClubDetailPage({ clubId }: { clubId: string }) {
                         </AvatarFallback>
                       </Avatar>
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium truncate">{member.name}</p>
+                        <p className="text-xs sm:text-sm font-medium truncate">{member.name}</p>
                         <p className="text-xs text-muted-foreground capitalize flex items-center gap-1">
-                          <RoleIcon className="h-3 w-3" />
+                          <RoleIcon className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
                           {member.role.replace("_", " ")}
                         </p>
                       </div>

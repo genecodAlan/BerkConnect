@@ -188,41 +188,41 @@ export function ManageLeadershipDialog({ clubId, clubName, currentUserId, isPres
           <UserCog className="h-4 w-4" />
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto w-[calc(100vw-2rem)] sm:w-full">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <UserCog className="h-5 w-5" />
+          <DialogTitle className="flex items-center gap-2 text-base sm:text-lg">
+            <UserCog className="h-4 w-4 sm:h-5 sm:w-5" />
             Manage Leadership - {clubName}
           </DialogTitle>
-          <DialogDescription>
+          <DialogDescription className="text-xs sm:text-sm">
             Add, promote, or manage leadership roles for your club members.
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-6">
+        <div className="space-y-4 sm:space-y-6">
           {/* Current Leaders */}
-          <div className="space-y-3">
-            <h3 className="text-lg font-semibold">Current Leadership</h3>
+          <div className="space-y-2 sm:space-y-3">
+            <h3 className="text-base sm:text-lg font-semibold">Current Leadership</h3>
             {leaders.length > 0 ? (
               <div className="space-y-2">
                 {leaders.map((leader) => {
                   const RoleIcon = getRoleIcon(leader.role)
                   return (
-                    <div key={leader.id} className="flex items-center justify-between p-3 border rounded-lg">
-                      <div className="flex items-center gap-3">
-                        <Avatar className="h-8 w-8">
+                    <div key={leader.id} className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-3 p-2.5 sm:p-3 border rounded-lg">
+                      <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
+                        <Avatar className="h-7 w-7 sm:h-8 sm:w-8 flex-shrink-0">
                           <AvatarImage src={leader.avatar_url || "/placeholder.svg"} alt={leader.name} />
                           <AvatarFallback className="text-xs">
                             {leader.name.split(" ").map(n => n[0]).join("")}
                           </AvatarFallback>
                         </Avatar>
-                        <div>
-                          <p className="font-medium">{leader.name}</p>
-                          <p className="text-sm text-muted-foreground">{leader.email}</p>
+                        <div className="min-w-0 flex-1">
+                          <p className="font-medium text-sm sm:text-base truncate">{leader.name}</p>
+                          <p className="text-xs sm:text-sm text-muted-foreground truncate">{leader.email}</p>
                         </div>
-                        <Badge className={getRoleBadgeColor(leader.role)}>
-                          <RoleIcon className="h-3 w-3 mr-1" />
-                          {getRoleLabel(leader.role)}
+                        <Badge className={`${getRoleBadgeColor(leader.role)} text-xs flex-shrink-0`}>
+                          <RoleIcon className="h-2.5 w-2.5 sm:h-3 sm:w-3 mr-0.5 sm:mr-1" />
+                          <span className="hidden xs:inline">{getRoleLabel(leader.role)}</span>
                         </Badge>
                       </div>
                       {leader.user_id !== currentUserId && (
@@ -230,8 +230,9 @@ export function ManageLeadershipDialog({ clubId, clubName, currentUserId, isPres
                           variant="outline"
                           size="sm"
                           onClick={() => handleDemoteLeader(leader.user_id)}
+                          className="h-8 text-xs sm:text-sm w-full sm:w-auto"
                         >
-                          <Trash2 className="h-4 w-4 mr-1" />
+                          <Trash2 className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
                           Demote
                         </Button>
                       )}
@@ -240,28 +241,29 @@ export function ManageLeadershipDialog({ clubId, clubName, currentUserId, isPres
                 })}
               </div>
             ) : (
-              <p className="text-muted-foreground">No other leaders assigned yet.</p>
+              <p className="text-sm text-muted-foreground">No other leaders assigned yet.</p>
             )}
           </div>
 
           {/* Add Leader by Email */}
-          <div className="space-y-3">
-            <h3 className="text-lg font-semibold">Add New Leader</h3>
-            <div className="flex gap-2">
+          <div className="space-y-2 sm:space-y-3">
+            <h3 className="text-base sm:text-lg font-semibold">Add New Leader</h3>
+            <div className="flex flex-col sm:flex-row gap-2">
               <div className="flex-1">
-                <Label htmlFor="leader-email">Email Address</Label>
+                <Label htmlFor="leader-email" className="text-sm">Email Address</Label>
                 <Input
                   id="leader-email"
                   type="email"
                   placeholder="Enter member's email"
                   value={newLeaderEmail}
                   onChange={(e) => setNewLeaderEmail(e.target.value)}
+                  className="h-9 sm:h-10 text-sm"
                 />
               </div>
-              <div className="w-40">
-                <Label htmlFor="leader-role">Role</Label>
+              <div className="w-full sm:w-40">
+                <Label htmlFor="leader-role" className="text-sm">Role</Label>
                 <Select value={newLeaderRole} onValueChange={setNewLeaderRole}>
-                  <SelectTrigger>
+                  <SelectTrigger className="h-9 sm:h-10 text-sm">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -274,8 +276,8 @@ export function ManageLeadershipDialog({ clubId, clubName, currentUserId, isPres
                 </Select>
               </div>
               <div className="flex items-end">
-                <Button onClick={handleAddLeaderByEmail} disabled={!newLeaderEmail.trim()}>
-                  <Plus className="h-4 w-4 mr-1" />
+                <Button onClick={handleAddLeaderByEmail} disabled={!newLeaderEmail.trim()} className="w-full sm:w-auto h-9 sm:h-10 text-sm">
+                  <Plus className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-1" />
                   Add
                 </Button>
               </div>
@@ -283,34 +285,36 @@ export function ManageLeadershipDialog({ clubId, clubName, currentUserId, isPres
           </div>
 
           {/* Promote Members */}
-          <div className="space-y-3">
-            <h3 className="text-lg font-semibold">Promote Members</h3>
+          <div className="space-y-2 sm:space-y-3">
+            <h3 className="text-base sm:text-lg font-semibold">Promote Members</h3>
             {members.length > 0 ? (
               <div className="space-y-2">
                 {members.map((member) => (
-                  <div key={member.id} className="flex items-center justify-between p-3 border rounded-lg">
-                    <div className="flex items-center gap-3">
-                      <Avatar className="h-8 w-8">
+                  <div key={member.id} className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-3 p-2.5 sm:p-3 border rounded-lg">
+                    <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
+                      <Avatar className="h-7 w-7 sm:h-8 sm:w-8 flex-shrink-0">
                         <AvatarImage src={member.avatar_url || "/placeholder.svg"} alt={member.name} />
                         <AvatarFallback className="text-xs">
                           {member.name.split(" ").map(n => n[0]).join("")}
                         </AvatarFallback>
                       </Avatar>
-                      <div>
-                        <p className="font-medium">{member.name}</p>
-                        <p className="text-sm text-muted-foreground">{member.email}</p>
+                      <div className="min-w-0 flex-1">
+                        <p className="font-medium text-sm sm:text-base truncate">{member.name}</p>
+                        <p className="text-xs sm:text-sm text-muted-foreground truncate">{member.email}</p>
                       </div>
-                      <Badge variant="outline">Member</Badge>
+                      <Badge variant="outline" className="text-xs flex-shrink-0">Member</Badge>
                     </div>
-                    <div className="flex gap-1">
+                    <div className="flex gap-1 flex-wrap sm:flex-nowrap">
                       {LEADERSHIP_ROLES.filter(role => role.value !== 'president').map((role) => (
                         <Button
                           key={role.value}
                           variant="outline"
                           size="sm"
                           onClick={() => handlePromoteMember(member.user_id, role.value)}
+                          className="h-8 text-xs flex-1 sm:flex-none"
                         >
-                          {role.label}
+                          <span className="hidden sm:inline">{role.label}</span>
+                          <span className="sm:hidden">{role.value === 'vice_president' ? 'VP' : role.label}</span>
                         </Button>
                       ))}
                     </div>
@@ -318,7 +322,7 @@ export function ManageLeadershipDialog({ clubId, clubName, currentUserId, isPres
                 ))}
               </div>
             ) : (
-              <p className="text-muted-foreground">No regular members to promote.</p>
+              <p className="text-sm text-muted-foreground">No regular members to promote.</p>
             )}
           </div>
         </div>

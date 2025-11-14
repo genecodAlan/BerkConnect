@@ -205,40 +205,40 @@ export function ClubsContent() {
             alt={club.name}
             className="w-full h-full object-cover"
           />
-          <div className="absolute top-3 left-3">
-            <Badge className={categoryColors[club.category]}>
-              <CategoryIcon className="h-3 w-3 mr-1" />
-              {club.category}
+          <div className="absolute top-2 sm:top-3 left-2 sm:left-3">
+            <Badge className={`${categoryColors[club.category]} text-xs`}>
+              <CategoryIcon className="h-2.5 w-2.5 sm:h-3 sm:w-3 mr-0.5 sm:mr-1" />
+              <span className="hidden xs:inline">{club.category}</span>
             </Badge>
           </div>
           {!club.is_claimed && (
-            <div className="absolute top-3 right-3">
-              <Badge variant="outline" className="bg-yellow-100 text-yellow-800 border-yellow-300">
+            <div className="absolute top-2 sm:top-3 right-2 sm:right-3">
+              <Badge variant="outline" className="bg-yellow-100 text-yellow-800 border-yellow-300 text-xs">
                 Unclaimed
               </Badge>
             </div>
           )}
           {showLeadershipBadge && isLeader && (
-            <div className="absolute top-3 right-3">
-              <Badge variant="outline" className="bg-blue-100 text-blue-800 border-blue-300">
-                <Crown className="h-3 w-3 mr-1" />
+            <div className="absolute top-2 sm:top-3 right-2 sm:right-3">
+              <Badge variant="outline" className="bg-blue-100 text-blue-800 border-blue-300 text-xs">
+                <Crown className="h-2.5 w-2.5 sm:h-3 sm:w-3 mr-0.5 sm:mr-1" />
                 {club.memberRole === 'president' ? 'President' : club.memberRole === 'vice_president' ? 'VP' : 'Officer'}
               </Badge>
             </div>
           )}
         </div>
 
-        <CardHeader className="pb-3">
+        <CardHeader className="pb-2 sm:pb-3 px-3 sm:px-6 pt-3 sm:pt-6">
           <div className="flex items-start justify-between">
-            <div className="space-y-1">
+            <div className="space-y-1 min-w-0 flex-1">
               <Link href={`/clubs/${club.id}`}>
-                <CardTitle className="text-lg hover:text-primary transition-colors cursor-pointer">
+                <CardTitle className="text-base sm:text-lg hover:text-primary transition-colors cursor-pointer truncate">
                   {club.name}
                 </CardTitle>
               </Link>
-              <div className="flex items-center gap-4 text-sm text-muted-foreground">
+              <div className="flex items-center gap-2 sm:gap-4 text-xs sm:text-sm text-muted-foreground">
                 <div className="flex items-center gap-1">
-                  <Users className="h-4 w-4" />
+                  <Users className="h-3 w-3 sm:h-4 sm:w-4" />
                   <span>{club.member_count || 0} members</span>
                 </div>
               </div>
@@ -246,27 +246,27 @@ export function ClubsContent() {
           </div>
         </CardHeader>
 
-        <CardContent className="space-y-4">
-          <CardDescription className="line-clamp-3">{club.description}</CardDescription>
+        <CardContent className="space-y-3 sm:space-y-4 px-3 sm:px-6 pb-3 sm:pb-6">
+          <CardDescription className="line-clamp-3 text-xs sm:text-sm">{club.description}</CardDescription>
 
           {club.is_claimed && club.meeting_time && (
-            <div className="space-y-2 text-sm">
+            <div className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm">
               <div className="flex items-center gap-2 text-muted-foreground">
-                <Calendar className="h-4 w-4" />
-                <span>{club.meeting_time}</span>
+                <Calendar className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
+                <span className="truncate">{club.meeting_time}</span>
               </div>
               {club.location && (
                 <div className="flex items-center gap-2 text-muted-foreground">
-                  <MapPin className="h-4 w-4" />
-                  <span>{club.location}</span>
+                  <MapPin className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
+                  <span className="truncate">{club.location}</span>
                 </div>
               )}
             </div>
           )}
 
           {club.is_claimed && club.president_name && (
-            <div className="flex items-center gap-2">
-              <Avatar className="h-6 w-6">
+            <div className="flex items-center gap-2 min-w-0">
+              <Avatar className="h-5 w-5 sm:h-6 sm:w-6 flex-shrink-0">
                 <AvatarImage src={club.president_avatar || "/placeholder.svg"} alt={club.president_name} />
                 <AvatarFallback className="text-xs">
                   {club.president_name
@@ -275,20 +275,25 @@ export function ClubsContent() {
                     .join("")}
                 </AvatarFallback>
               </Avatar>
-              <span className="text-sm text-muted-foreground flex items-center gap-1">
-                <Crown className="h-3 w-3" />
-                President: {club.president_name}
+              <span className="text-xs sm:text-sm text-muted-foreground flex items-center gap-1 truncate">
+                <Crown className="h-2.5 w-2.5 sm:h-3 sm:w-3 flex-shrink-0" />
+                <span className="truncate">President: {club.president_name}</span>
               </span>
             </div>
           )}
 
           {club.tags && club.tags.length > 0 && (
             <div className="flex flex-wrap gap-1">
-              {club.tags.map((tag) => (
+              {club.tags.slice(0, 3).map((tag) => (
                 <Badge key={tag} variant="outline" className="text-xs">
                   {tag}
                 </Badge>
               ))}
+              {club.tags.length > 3 && (
+                <Badge variant="outline" className="text-xs">
+                  +{club.tags.length - 3}
+                </Badge>
+              )}
             </div>
           )}
 
@@ -403,19 +408,19 @@ export function ClubsContent() {
   }
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-8 space-y-8">
-      <div className="text-center space-y-4">
-        <div className="flex items-center justify-between">
-          <div className="flex-1"></div>
-          <div className="flex-1">
-            <h1 className="text-3xl font-bold text-foreground">School Clubs</h1>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
+    <div className="max-w-6xl mx-auto px-3 sm:px-4 py-4 sm:py-8 space-y-4 sm:space-y-8">
+      <div className="text-center space-y-2 sm:space-y-4">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
+          <div className="hidden sm:block sm:flex-1"></div>
+          <div className="flex-1 w-full">
+            <h1 className="text-2xl sm:text-3xl font-bold text-foreground">School Clubs</h1>
+            <p className="text-xs sm:text-base text-muted-foreground max-w-2xl mx-auto px-2">
               Discover and join clubs, or claim an unclaimed club to become its president.
             </p>
           </div>
-          <div className="flex-1 flex justify-end">
+          <div className="sm:flex-1 flex justify-center sm:justify-end w-full sm:w-auto">
             {user?.role === "admin" && (
-              <Button variant="outline" onClick={() => setShowAdmin(!showAdmin)}>
+              <Button variant="outline" size="sm" onClick={() => setShowAdmin(!showAdmin)} className="text-xs sm:text-sm">
                 {showAdmin ? "Hide" : "Show"} Admin
               </Button>
             )}
@@ -430,25 +435,25 @@ export function ClubsContent() {
       )}
 
       <Tabs defaultValue="all" className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="all">All Clubs</TabsTrigger>
-          <TabsTrigger value="my-clubs">My Clubs</TabsTrigger>
-          <TabsTrigger value="unclaimed">Unclaimed</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-3 h-auto">
+          <TabsTrigger value="all" className="text-xs sm:text-sm py-2">All Clubs</TabsTrigger>
+          <TabsTrigger value="my-clubs" className="text-xs sm:text-sm py-2">My Clubs</TabsTrigger>
+          <TabsTrigger value="unclaimed" className="text-xs sm:text-sm py-2">Unclaimed</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="all" className="space-y-6">
-          <div className="flex flex-col sm:flex-row gap-4">
+        <TabsContent value="all" className="space-y-4 sm:space-y-6">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
                 placeholder="Search clubs..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
+                className="pl-10 h-9 sm:h-10 text-sm"
               />
             </div>
             <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-              <SelectTrigger className="w-full sm:w-48">
+              <SelectTrigger className="w-full sm:w-48 h-9 sm:h-10 text-sm">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -461,42 +466,42 @@ export function ClubsContent() {
             </Select>
           </div>
 
-          <div className="text-sm text-muted-foreground">Showing {filteredClubs.length} clubs</div>
+          <div className="text-xs sm:text-sm text-muted-foreground">Showing {filteredClubs.length} clubs</div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {filteredClubs.map((club) => renderClubCard(club, false))}
           </div>
 
           {filteredClubs.length === 0 && (
-            <div className="text-center py-12">
-              <Search className="h-12 w-12 mx-auto mb-4 opacity-50" />
-              <p className="text-lg">No clubs found</p>
+            <div className="text-center py-8 sm:py-12">
+              <Search className="h-10 w-10 sm:h-12 sm:w-12 mx-auto mb-3 sm:mb-4 opacity-50" />
+              <p className="text-base sm:text-lg">No clubs found</p>
             </div>
           )}
         </TabsContent>
 
-        <TabsContent value="my-clubs" className="space-y-6">
-          <div className="text-sm text-muted-foreground">{joinedClubs.length} joined clubs</div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <TabsContent value="my-clubs" className="space-y-4 sm:space-y-6">
+          <div className="text-xs sm:text-sm text-muted-foreground">{joinedClubs.length} joined clubs</div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {joinedClubs.map((club) => renderClubCard(club, true))}
           </div>
           {joinedClubs.length === 0 && (
-            <div className="text-center py-12">
-              <Users className="h-12 w-12 mx-auto mb-4 opacity-50" />
-              <p className="text-lg">You haven't joined any clubs yet</p>
+            <div className="text-center py-8 sm:py-12">
+              <Users className="h-10 w-10 sm:h-12 sm:w-12 mx-auto mb-3 sm:mb-4 opacity-50" />
+              <p className="text-base sm:text-lg">You haven't joined any clubs yet</p>
             </div>
           )}
         </TabsContent>
 
-        <TabsContent value="unclaimed" className="space-y-6">
-          <div className="text-sm text-muted-foreground">{unclaimedClubs.length} unclaimed clubs available</div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <TabsContent value="unclaimed" className="space-y-4 sm:space-y-6">
+          <div className="text-xs sm:text-sm text-muted-foreground">{unclaimedClubs.length} unclaimed clubs available</div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {unclaimedClubs.map((club) => renderClubCard(club, false))}
           </div>
           {unclaimedClubs.length === 0 && (
-            <div className="text-center py-12">
-              <Crown className="h-12 w-12 mx-auto mb-4 opacity-50" />
-              <p className="text-lg">All clubs have been claimed!</p>
+            <div className="text-center py-8 sm:py-12">
+              <Crown className="h-10 w-10 sm:h-12 sm:w-12 mx-auto mb-3 sm:mb-4 opacity-50" />
+              <p className="text-base sm:text-lg">All clubs have been claimed!</p>
             </div>
           )}
         </TabsContent>

@@ -63,26 +63,26 @@ export function ProfileCreation() {
   }
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-4">
+    <div className="min-h-screen bg-background flex items-center justify-center p-3 sm:p-4">
       <Card className="w-full max-w-2xl">
-        <CardHeader className="text-center">
-          <CardTitle className="text-3xl">Create Your Profile</CardTitle>
-          <CardDescription>
+        <CardHeader className="text-center px-4 sm:px-6 py-4 sm:py-6">
+          <CardTitle className="text-2xl sm:text-3xl">Create Your Profile</CardTitle>
+          <CardDescription className="text-sm sm:text-base">
             Complete your profile to start using SchoolConnect
           </CardDescription>
         </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-6">
+        <CardContent className="px-4 sm:px-6 pb-4 sm:pb-6">
+          <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
             {/* Role Selection */}
-            <div className="space-y-2">
-              <Label htmlFor="role">I am a:</Label>
+            <div className="space-y-1.5 sm:space-y-2">
+              <Label htmlFor="role" className="text-sm">I am a:</Label>
               <Select
                 value={formData.role}
                 onValueChange={(value: "student" | "sponsor" | "admin") =>
                   setFormData(prev => ({ ...prev, role: value }))
                 }
               >
-                <SelectTrigger>
+                <SelectTrigger className="h-9 sm:h-10 text-sm">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -95,15 +95,15 @@ export function ProfileCreation() {
 
             {/* Grade (for students) */}
             {formData.role === "student" && (
-              <div className="space-y-2">
-                <Label htmlFor="grade">Grade Level:</Label>
+              <div className="space-y-1.5 sm:space-y-2">
+                <Label htmlFor="grade" className="text-sm">Grade Level:</Label>
                 <Select
                   value={formData.grade}
                   onValueChange={(value) =>
                     setFormData(prev => ({ ...prev, grade: value }))
                   }
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="h-9 sm:h-10 text-sm">
                     <SelectValue placeholder="Select your grade" />
                   </SelectTrigger>
                   <SelectContent>
@@ -118,8 +118,8 @@ export function ProfileCreation() {
 
             {/* Department (for sponsors) */}
             {formData.role === "sponsor" && (
-              <div className="space-y-2">
-                <Label htmlFor="department">Department:</Label>
+              <div className="space-y-1.5 sm:space-y-2">
+                <Label htmlFor="department" className="text-sm">Department:</Label>
                 <Input
                   id="department"
                   placeholder="e.g., Science, Arts, Athletics"
@@ -127,13 +127,14 @@ export function ProfileCreation() {
                   onChange={(e) =>
                     setFormData(prev => ({ ...prev, department: e.target.value }))
                   }
+                  className="h-9 sm:h-10 text-sm"
                 />
               </div>
             )}
 
             {/* Bio */}
-            <div className="space-y-2">
-              <Label htmlFor="bio">Bio (Optional):</Label>
+            <div className="space-y-1.5 sm:space-y-2">
+              <Label htmlFor="bio" className="text-sm">Bio (Optional):</Label>
               <Textarea
                 id="bio"
                 placeholder="Tell us a bit about yourself..."
@@ -142,18 +143,20 @@ export function ProfileCreation() {
                   setFormData(prev => ({ ...prev, bio: e.target.value }))
                 }
                 rows={3}
+                className="text-sm"
               />
             </div>
 
             {/* Interests */}
-            <div className="space-y-2">
-              <Label>Interests (Optional):</Label>
+            <div className="space-y-1.5 sm:space-y-2">
+              <Label className="text-sm">Interests (Optional):</Label>
               <div className="flex gap-2">
                 <Input
                   placeholder="Add an interest..."
                   value={newInterest}
                   onChange={(e) => setNewInterest(e.target.value)}
                   onKeyPress={handleKeyPress}
+                  className="h-9 sm:h-10 text-sm"
                 />
                 <Button
                   type="button"
@@ -161,6 +164,7 @@ export function ProfileCreation() {
                   size="icon"
                   onClick={addInterest}
                   disabled={!newInterest.trim()}
+                  className="h-9 w-9 sm:h-10 sm:w-10 flex-shrink-0"
                 >
                   <Plus className="h-4 w-4" />
                 </Button>
@@ -168,16 +172,16 @@ export function ProfileCreation() {
               
               {/* Display interests */}
               {formData.interests.length > 0 && (
-                <div className="flex flex-wrap gap-2 mt-2">
+                <div className="flex flex-wrap gap-1.5 sm:gap-2 mt-2">
                   {formData.interests.map((interest) => (
-                    <Badge key={interest} variant="secondary" className="gap-1">
+                    <Badge key={interest} variant="secondary" className="gap-1 text-xs">
                       {interest}
                       <button
                         type="button"
                         onClick={() => removeInterest(interest)}
                         className="ml-1 hover:bg-destructive hover:text-destructive-foreground rounded-full p-0.5"
                       >
-                        <X className="h-3 w-3" />
+                        <X className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
                       </button>
                     </Badge>
                   ))}
@@ -188,7 +192,7 @@ export function ProfileCreation() {
             {/* Submit Button */}
             <Button
               type="submit"
-              className="w-full"
+              className="w-full h-9 sm:h-10 text-sm"
               disabled={isSubmitting}
             >
               {isSubmitting ? "Creating Profile..." : "Create Profile"}

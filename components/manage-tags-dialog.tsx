@@ -92,42 +92,42 @@ export const ManageTagsDialog = memo(function ManageTagsDialog({
           Manage Tags
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-md">
+      <DialogContent className="max-w-md w-[calc(100vw-2rem)] sm:w-full">
         <DialogHeader>
-          <DialogTitle>Manage Tags for {clubName}</DialogTitle>
-          <DialogDescription>Add or remove searchable tags for your club</DialogDescription>
+          <DialogTitle className="text-base sm:text-lg">Manage Tags for {clubName}</DialogTitle>
+          <DialogDescription className="text-xs sm:text-sm">Add or remove searchable tags for your club</DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-4">
+        <div className="space-y-3 sm:space-y-4">
           {/* Current Tags */}
-          <div className="space-y-2">
-            <Label>Current Tags ({tags.length}/10)</Label>
-            <div className="flex flex-wrap gap-2 min-h-[60px] p-3 border rounded-lg">
+          <div className="space-y-1.5 sm:space-y-2">
+            <Label className="text-sm">Current Tags ({tags.length}/10)</Label>
+            <div className="flex flex-wrap gap-1.5 sm:gap-2 min-h-[60px] p-2.5 sm:p-3 border rounded-lg">
               {tags.length > 0 ? (
                 tags.map((tag) => (
-                  <Badge key={tag} variant="secondary" className="gap-1">
+                  <Badge key={tag} variant="secondary" className="gap-1 text-xs">
                     {tag}
                     <button
                       onClick={() => handleRemoveTag(tag)}
                       className="ml-1 hover:text-destructive"
                     >
-                      <X className="h-3 w-3" />
+                      <X className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
                     </button>
                   </Badge>
                 ))
               ) : (
-                <p className="text-sm text-muted-foreground">No tags yet</p>
+                <p className="text-xs sm:text-sm text-muted-foreground">No tags yet</p>
               )}
             </div>
           </div>
 
           {/* Add New Tag */}
-          <div className="space-y-2">
-            <Label htmlFor="new-tag">Add New Tag</Label>
+          <div className="space-y-1.5 sm:space-y-2">
+            <Label htmlFor="new-tag" className="text-sm">Add New Tag</Label>
             <div className="flex gap-2">
               <Input
                 id="new-tag"
-                placeholder="e.g., stem, coding, beginner-friendly"
+                placeholder="e.g., stem, coding"
                 value={newTag}
                 onChange={(e) => setNewTag(e.target.value)}
                 onKeyPress={(e) => {
@@ -137,8 +137,9 @@ export const ManageTagsDialog = memo(function ManageTagsDialog({
                   }
                 }}
                 maxLength={30}
+                className="h-9 sm:h-10 text-sm"
               />
-              <Button onClick={handleAddTag} disabled={!newTag.trim() || tags.length >= 10}>
+              <Button onClick={handleAddTag} disabled={!newTag.trim() || tags.length >= 10} className="h-9 sm:h-10 text-sm flex-shrink-0">
                 Add
               </Button>
             </div>
@@ -148,8 +149,8 @@ export const ManageTagsDialog = memo(function ManageTagsDialog({
           </div>
 
           {/* Action Buttons */}
-          <div className="flex gap-2 pt-4">
-            <Button onClick={handleSave} disabled={loading} className="flex-1">
+          <div className="flex gap-2 pt-2 sm:pt-4">
+            <Button onClick={handleSave} disabled={loading} className="flex-1 h-9 sm:h-10 text-sm">
               {loading ? "Saving..." : "Save Tags"}
             </Button>
             <Button
@@ -159,6 +160,7 @@ export const ManageTagsDialog = memo(function ManageTagsDialog({
                 setOpen(false)
               }}
               disabled={loading}
+              className="h-9 sm:h-10 text-sm"
             >
               Cancel
             </Button>
