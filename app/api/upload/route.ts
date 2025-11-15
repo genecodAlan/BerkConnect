@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { writeFile, mkdir } from 'fs/promises'
-import { join } from 'path'
-import { existsSync } from 'fs'
 
 // POST /api/upload - Handle image uploads
+// NOTE: File uploads disabled on Vercel (read-only filesystem)
+// TODO: Implement cloud storage (Cloudinary, Vercel Blob, or AWS S3)
 export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData()
@@ -32,34 +31,19 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Create uploads directory if it doesn't exist
-    const uploadsDir = join(process.cwd(), 'public', 'uploads')
-    if (!existsSync(uploadsDir)) {
-      await mkdir(uploadsDir, { recursive: true })
-    }
-
-    // Generate unique filename
-    const timestamp = Date.now()
-    const fileExtension = file.name.split('.').pop()
-    const filename = `lost-found-${timestamp}.${fileExtension}`
-    const filepath = join(uploadsDir, filename)
-
-    // Convert file to buffer and save
-    const bytes = await file.arrayBuffer()
-    const buffer = Buffer.from(bytes)
-    await writeFile(filepath, buffer)
-
-    // Return the public URL
-    const publicUrl = `/uploads/${filename}`
+    // TEMPORARY: Return placeholder until cloud storage is set up
+    // In production, you would upload to Cloudinary, Vercel Blob, or S3 here
+    const placeholderUrl = `/placeholder.svg?key=upload-${Date.now()}`
 
     return NextResponse.json({
       success: true,
       data: {
-        filename,
-        url: publicUrl,
+        filename: file.name,
+        url: placeholderUrl,
         size: file.size,
         type: file.type
-      }
+      },
+      message: 'File upload temporarily disabled. Using placeholder image.'
     })
 
   } catch (error) {

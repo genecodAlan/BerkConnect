@@ -12,14 +12,14 @@ export async function GET(
     const userId = searchParams.get('userId')
     const query = `
       SELECT 
-        cp.*,
+        p.*,
         u.name as author_name,
         u.avatar_url as author_avatar,
         u.email as author_email
-      FROM club_posts cp
-      JOIN users u ON cp.author_id = u.id
-      WHERE cp.club_id = $1
-      ORDER BY cp.created_at DESC
+      FROM posts p
+      JOIN users u ON p.user_id = u.id
+      WHERE p.club_id = $1
+      ORDER BY p.created_at DESC
     `
 
     const result = await pool.query(query, [clubId])
@@ -96,7 +96,7 @@ export async function POST(
 
     // Create post
     const insertQuery = `
-      INSERT INTO club_posts (club_id, author_id, content, image_url)
+      INSERT INTO posts (club_id, user_id, content, image_url)
       VALUES ($1, $2, $3, $4)
       RETURNING *
     `
