@@ -27,30 +27,30 @@ export async function GET(request: NextRequest) {
     // Single optimized query to get all posts with club info
     const postsQuery = `
       SELECT 
-        cp.id,
-        cp.club_id,
-        cp.content,
-        cp.image_url,
-        cp.likes_count,
-        cp.comments_count,
-        cp.created_at,
-        cp.author_id,
+        p.id,
+        p.club_id,
+        p.content,
+        p.image_url,
+        0 as likes_count,
+        0 as comments_count,
+        p.created_at,
+        p.user_id as author_id,
         u.name as author_name,
         u.avatar_url as author_avatar,
         u.email as author_email,
         c.name as club_name,
         c.image_url as club_avatar
-      FROM club_posts cp
-      JOIN users u ON cp.author_id = u.id
-      JOIN clubs c ON cp.club_id = c.id
-      ORDER BY cp.created_at DESC
+      FROM posts p
+      JOIN users u ON p.user_id = u.id
+      JOIN clubs c ON p.club_id = c.id
+      ORDER BY p.created_at DESC
       LIMIT $1 OFFSET $2
     `
 
     const postsResult = await pool.query(postsQuery, [limit, offset])
 
     // Get total count for pagination metadata
-    const countQuery = 'SELECT COUNT(*) as total FROM club_posts'
+    const countQuery = 'SELECT COUNT(*) as total FROM posts'
     const countResult = await pool.query(countQuery)
     const totalPosts = parseInt(countResult.rows[0].total)
     const totalPages = Math.ceil(totalPosts / limit)
