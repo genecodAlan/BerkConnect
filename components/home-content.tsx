@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
-import { Heart, MessageCircle, Share2, Users, Loader2 } from "lucide-react"
+import { Heart, Users, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useAuth } from "@/contexts/auth-context"
 
@@ -212,16 +212,6 @@ export function HomeContent() {
                     >
                       <Heart className={`h-3.5 w-3.5 sm:h-4 sm:w-4 ${post.isLiked ? "fill-current" : ""}`} />
                       <span className="text-xs sm:text-sm">{post.likes_count || 0}</span>
-                    </Button>
-
-                    <Button variant="ghost" size="sm" className="gap-1.5 sm:gap-2 h-8 sm:h-9 px-2 sm:px-3 text-muted-foreground">
-                      <MessageCircle className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                      <span className="text-xs sm:text-sm">{post.comments_count || 0}</span>
-                    </Button>
-
-                    <Button variant="ghost" size="sm" className="gap-1.5 sm:gap-2 h-8 sm:h-9 px-2 sm:px-3 text-muted-foreground">
-                      <Share2 className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                      <span className="text-xs sm:text-sm hidden xs:inline">Share</span>
                     </Button>
                   </div>
                 </div>
