@@ -40,6 +40,14 @@ export const CreatePostDialog = memo(function CreatePostDialog({
   const handleImageSelect = useCallback(async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
     if (file) {
+      // Validate file type
+      const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp']
+      if (!validTypes.includes(file.type)) {
+        alert('File not supported. Please upload a valid image file (JPEG, PNG, GIF, or WebP).')
+        event.target.value = ''
+        return
+      }
+
       // Read the file for cropping
       const reader = new FileReader()
       reader.onload = (e) => {
@@ -184,7 +192,7 @@ export const CreatePostDialog = memo(function CreatePostDialog({
                 <input
                   type="file"
                   id="post-image"
-                  accept="image/*"
+                  accept="image/jpeg,image/jpg,image/png,image/gif,image/webp"
                   onChange={handleImageSelect}
                   className="hidden"
                 />
