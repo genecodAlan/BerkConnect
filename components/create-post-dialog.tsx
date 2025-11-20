@@ -13,6 +13,7 @@ import {
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { MessageSquare, Upload, X } from "lucide-react"
+import { validateAndCompressImage } from "@/lib/image-compression"
 
 interface CreatePostDialogProps {
   clubId: string
@@ -33,18 +34,19 @@ export const CreatePostDialog = memo(function CreatePostDialog({
   const [imagePreview, setImagePreview] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
 
-  const handleImageSelect = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageSelect = useCallback(async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
     if (file) {
-      if (!file.type.startsWith("image/")) {
-        alert("Please select an image file")
+      // Validate and compress the image
+      const compressedFile = await validateAndCompressImage(file)
+      
+      if (!compressedFile) {
+        // Validation or compression failed
+        event.target.value = '' // Reset input
         return
       }
-      if (file.size > 5 * 1024 * 1024) {
-        alert("Image size should be less than 5MB")
-        return
-      }
-      setSelectedImage(file)
+
+      setSelectedImage(compressedFile)
       const reader = new FileReader()
       reader.onload = (e) => {
         setImagePreview(e.target?.result as string)

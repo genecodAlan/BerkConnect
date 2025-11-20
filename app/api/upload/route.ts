@@ -22,10 +22,10 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Validate file size (max 5MB)
-    if (file.size > 5 * 1024 * 1024) {
+    // Validate file size (max 1MB after compression)
+    if (file.size > 1 * 1024 * 1024) {
       return NextResponse.json(
-        { success: false, error: 'File size must be less than 5MB' },
+        { success: false, error: 'File size must be less than 1MB. Please compress the image before uploading.' },
         { status: 400 }
       )
     }
