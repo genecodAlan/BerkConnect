@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabase } from '@/lib/supabase'
+import { withRateLimit, getClientIdentifier } from '@/lib/security/api-middleware'
 
 // POST /api/upload - Handle image uploads using Supabase Storage
-export async function POST(request: NextRequest) {
+async function uploadHandler(request: NextRequest) {
   try {
     const formData = await request.formData()
     const file = formData.get('file') as File
@@ -79,3 +80,6 @@ export async function POST(request: NextRequest) {
     )
   }
 }
+
+// Apply rate limiting: 10 uploads per minute, 100 per hour
+export const POST = withRateLimit(uploadHandler, 10, 60000)

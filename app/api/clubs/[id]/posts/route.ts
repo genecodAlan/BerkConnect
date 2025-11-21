@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import pool from '@/lib/db'
+import { checkPostRateLimit } from '@/lib/security/input-validator'
+import { getClientIdentifier } from '@/lib/security/api-middleware'
 
 // GET /api/clubs/[id]/posts - Get all posts for a club
 export async function GET(
@@ -79,6 +81,30 @@ export async function POST(
       return NextResponse.json(
         { success: false, error: 'User ID required' },
         { status: 400 }
+      )
+    }
+
+    // Apply post-specific rate limiting
+    const identifier = `${getClientIdentifier(request)}-${userId}`
+    const rateLimit = checkPostRateLimit(identifier)
+
+    if (!rateLimit.allowed) {
+      return NextResponse.json(
+        { 
+          success: false, 
+          error: rateLimit.error,
+          retryAfter: Math.ceil((rateLimit.resetTime - Date.now()) / 1000),
+          remaining: rateLimit.remaining,
+        },
+        { 
+          status: 429,
+          headers: {
+            'X-RateLimit-Remaining-Minute': rateLimit.remaining.minute.toString(),
+            'X-RateLimit-Remaining-Hour': rateLimit.remaining.hour.toString(),
+            'X-RateLimit-Remaining-Day': rateLimit.remaining.day.toString(),
+            'Retry-After': Math.ceil((rateLimit.resetTime - Date.now()) / 1000).toString(),
+          },
+        }
       )
     }
 

@@ -36,9 +36,9 @@ export async function POST(
     )
 
     // Get updated like count
-    const countQuery = 'SELECT COUNT(*) as count FROM post_likes WHERE post_id = $1'
+    const countQuery = 'SELECT COUNT(*)::int as count FROM post_likes WHERE post_id = $1'
     const countResult = await pool.query(countQuery, [postId])
-    const likeCount = parseInt(countResult.rows[0].count)
+    const likeCount = countResult.rows[0].count
 
     return NextResponse.json({
       success: true,
@@ -78,9 +78,9 @@ export async function DELETE(
     )
 
     // Get updated like count
-    const countQuery = 'SELECT COUNT(*) as count FROM post_likes WHERE post_id = $1'
+    const countQuery = 'SELECT COUNT(*)::int as count FROM post_likes WHERE post_id = $1'
     const countResult = await pool.query(countQuery, [postId])
-    const likeCount = parseInt(countResult.rows[0].count)
+    const likeCount = countResult.rows[0].count
 
     return NextResponse.json({
       success: true,

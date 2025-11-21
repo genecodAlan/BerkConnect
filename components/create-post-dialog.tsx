@@ -36,6 +36,7 @@ export const CreatePostDialog = memo(function CreatePostDialog({
   const [loading, setLoading] = useState(false)
   const [cropDialogOpen, setCropDialogOpen] = useState(false)
   const [tempImageSrc, setTempImageSrc] = useState<string | null>(null)
+  const [cooldownSeconds, setCooldownSeconds] = useState(0)
 
   const handleImageSelect = useCallback(async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
@@ -96,7 +97,7 @@ export const CreatePostDialog = memo(function CreatePostDialog({
   }, [])
 
   const handleSubmit = useCallback(async () => {
-    if (!content.trim()) return
+    if (!content.trim() || cooldownSeconds > 0) return
 
     setLoading(true)
 
@@ -116,6 +117,11 @@ export const CreatePostDialog = memo(function CreatePostDialog({
         if (uploadResponse.ok) {
           const uploadData = await uploadResponse.json()
           imageUrl = uploadData.data.url
+        } else {
+          const uploadError = await uploadResponse.json()
+          alert(uploadError.error || "Failed to upload image")
+          setLoading(false)
+          return
         }
       }
 
@@ -137,9 +143,31 @@ export const CreatePostDialog = memo(function CreatePostDialog({
         setOpen(false)
         alert("Post created successfully!")
         onPostCreated?.()
+        
+        // Start cooldown timer (15 seconds)
+        setCooldownSeconds(15)
+        const interval = setInterval(() => {
+          setCooldownSeconds((prev) => {
+            if (prev <= 1) {
+              clearInterval(interval)
+              return 0
+            }
+            return prev - 1
+          })
+        }, 1000)
       } else {
         const data = await response.json()
-        alert(data.error || "Failed to create post")
+        // Show rate limit information if available
+        if (response.status === 429 && data.remaining) {
+          alert(
+            `${data.error}\n\n` +
+            `Remaining today: ${data.remaining.day} posts\n` +
+            `Remaining this hour: ${data.remaining.hour} posts\n` +
+            `Remaining this minute: ${data.remaining.minute} posts`
+          )
+        } else {
+          alert(data.error || "Failed to create post")
+        }
       }
     } catch (error) {
       console.error("Error creating post:", error)
@@ -147,7 +175,7 @@ export const CreatePostDialog = memo(function CreatePostDialog({
     } finally {
       setLoading(false)
     }
-  }, [clubId, userId, content, selectedImage, onPostCreated])
+  }, [clubId, userId, content, selectedImage, onPostCreated, cooldownSeconds])
 
   const handleOpenChange = useCallback((newOpen: boolean) => {
     setOpen(newOpen)
@@ -221,9 +249,18 @@ export const CreatePostDialog = memo(function CreatePostDialog({
             )}
           </div>
 
-          <Button onClick={handleSubmit} className="w-full h-9 sm:h-10 text-sm" disabled={!content.trim() || loading}>
-            {loading ? "Posting..." : "Post"}
+          <Button 
+            onClick={handleSubmit} 
+            className="w-full h-9 sm:h-10 text-sm" 
+            disabled={!content.trim() || loading || cooldownSeconds > 0}
+          >
+            {loading ? "Posting..." : cooldownSeconds > 0 ? `Wait ${cooldownSeconds}s` : "Post"}
           </Button>
+          {cooldownSeconds > 0 && (
+            <p className="text-xs text-muted-foreground text-center">
+              Please wait {cooldownSeconds} seconds before posting again
+            </p>
+          )}
         </div>
       </DialogContent>
 

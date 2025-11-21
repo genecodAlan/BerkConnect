@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import pool from '@/lib/db'
+import { supabase } from '@/lib/supabase'
 
 // DELETE /api/posts/[id] - Delete a post (author or club leadership only)
 export async function DELETE(
@@ -18,8 +19,8 @@ export async function DELETE(
       )
     }
 
-    // Get post details
-    const postQuery = 'SELECT club_id, user_id FROM posts WHERE id = $1'
+    // Get post details including image URL
+    const postQuery = 'SELECT club_id, user_id, image_url FROM posts WHERE id = $1'
     const postResult = await pool.query(postQuery, [postId])
 
     if (postResult.rows.length === 0) {
@@ -51,7 +52,33 @@ export async function DELETE(
       )
     }
 
-    // Delete the post
+    // Delete associated image from storage if it exists
+    if (post.image_url) {
+      try {
+        // Extract filename from URL
+        // URL format: https://[project].supabase.co/storage/v1/object/public/club-images/[filename]
+        const urlParts = post.image_url.split('/')
+        const filename = urlParts[urlParts.length - 1]
+        
+        if (filename) {
+          const { error: deleteError } = await supabase.storage
+            .from('club-images')
+            .remove([filename])
+          
+          if (deleteError) {
+            console.error('Error deleting image from storage:', deleteError)
+            // Continue with post deletion even if image deletion fails
+          } else {
+            console.log(`Successfully deleted image: ${filename}`)
+          }
+        }
+      } catch (imageError) {
+        console.error('Error processing image deletion:', imageError)
+        // Continue with post deletion even if image deletion fails
+      }
+    }
+
+    // Delete the post (this will cascade delete likes due to foreign key constraints)
     await pool.query('DELETE FROM posts WHERE id = $1', [postId])
 
     return NextResponse.json({
