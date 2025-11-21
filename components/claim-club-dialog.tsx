@@ -173,7 +173,7 @@ export function ClaimClubDialog({
             <Button
               variant="outline"
               onClick={() => setIsOpen(false)}
-              className="flex-1 h-9 sm:h-10 text-sm"
+              className="flex-1 h-9 sm:h-10 text-sm border-2"
               disabled={isLoading}
             >
               Cancel
