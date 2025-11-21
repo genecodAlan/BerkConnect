@@ -180,7 +180,7 @@ export function ClaimClubDialog({
             </Button>
             <Button
               onClick={handleClaim}
-              className="flex-1 h-9 sm:h-10 text-sm"
+              className="flex-1 h-9 sm:h-10 text-sm border-2"
               disabled={!isConfirmed || isLoading}
             >
               {isLoading ? "Claiming..." : "Claim Club"}
