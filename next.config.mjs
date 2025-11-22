@@ -14,6 +14,9 @@ const nextConfig = {
   experimental: {
     // Use wildcard to allow any local network IP
     allowedDevOrigins: ['*'],
+    outputFileTracingIncludes: {
+      '/**': ['./node_modules/**/*.css'],
+    },
   },
 }
 
