@@ -9,15 +9,11 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-  // Allow mobile device testing from local network
-  // This suppresses the cross-origin warning when accessing from your phone
   experimental: {
-    // Use wildcard to allow any local network IP
     allowedDevOrigins: ['*'],
-    outputFileTracingIncludes: {
-      '/**': ['./node_modules/**/*.css'],
-    },
   },
+  // Ensure proper bundling for serverless functions
+  serverExternalPackages: ['pg', 'pg-native'],
 }
 
 export default nextConfig
