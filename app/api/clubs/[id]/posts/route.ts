@@ -68,7 +68,7 @@ export async function GET(
 // POST /api/clubs/[id]/posts - Create a new post for a club (members only)
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { id: clubId } = await params // Await params
@@ -90,13 +90,13 @@ export async function POST(
 
     if (!rateLimit.allowed) {
       return NextResponse.json(
-        { 
-          success: false, 
+        {
+          success: false,
           error: rateLimit.error,
           retryAfter: Math.ceil((rateLimit.resetTime - Date.now()) / 1000),
           remaining: rateLimit.remaining,
         },
-        { 
+        {
           status: 429,
           headers: {
             'X-RateLimit-Remaining-Minute': rateLimit.remaining.minute.toString(),
