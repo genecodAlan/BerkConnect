@@ -3,20 +3,20 @@
  * Protects against XSS, SQL Injection, and other injection attacks
  */
 
-import DOMPurify from 'isomorphic-dompurify'
-
 /**
  * Sanitize HTML content to prevent XSS attacks
- * Removes all script tags and dangerous attributes
+ * Removes all script tags and dangerous characters
  */
 export function sanitizeHtml(input: string): string {
   if (!input) return ''
   
-  return DOMPurify.sanitize(input, {
-    ALLOWED_TAGS: ['b', 'i', 'em', 'strong', 'a', 'p', 'br'],
-    ALLOWED_ATTR: ['href'],
-    ALLOW_DATA_ATTR: false,
-  })
+  // Simple HTML sanitization - remove all tags except safe ones
+  return input
+    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+    .replace(/<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/gi, '')
+    .replace(/on\w+\s*=\s*["'][^"']*["']/gi, '')
+    .replace(/on\w+\s*=\s*[^\s>]*/gi, '')
+    .replace(/<(?!\/?(?:b|i|em|strong|a|p|br)\b)[^>]+>/gi, '')
 }
 
 /**
@@ -25,10 +25,11 @@ export function sanitizeHtml(input: string): string {
 export function sanitizeText(input: string): string {
   if (!input) return ''
   
-  return DOMPurify.sanitize(input, {
-    ALLOWED_TAGS: [],
-    ALLOWED_ATTR: [],
-  })
+  // Remove all HTML tags and trim
+  return input
+    .replace(/<[^>]*>/g, '')
+    .replace(/[<>]/g, '')
+    .trim()
 }
 
 /**
